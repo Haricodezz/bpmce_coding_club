@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API_URL =
-  "http://localhost:5000/api/contest-participation";
+  "import.meta.env.VITE_API_URL/api/contest-participation";
 
 export const registerContest = async (data) => {
   const response = await axios.post(
