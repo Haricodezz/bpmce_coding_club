@@ -1,221 +1,172 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
-import { createEvent } from "../services/eventService";
-import { updateScore } from "../services/scoreService";
 
-
- 
 function Admin() {
-  const user = JSON.parse(localStorage.getItem("user"));
+  const [user, setUser] = useState(null);
+  const [activeTab, setActiveTab] = useState("overview");
 
-  const [eventData, setEventData] = useState({
-    title: "",
-    description: "",
-    event_date: "",
-    venue: "",
-  });
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (storedUser) setUser(storedUser);
+  }, []);
 
-  const handleChange = (e) => {
-    setEventData({
-      ...eventData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      const response = await createEvent({
-        ...eventData,
-        created_by: user.id,
-      });
-
-      alert(response.message);
-
-      setEventData({
-        title: "",
-        description: "",
-        event_date: "",
-        venue: "",
-      });
-
-    } catch (error) {
-      alert("Event creation failed");
-    }
-  };
-const [scoreData, setScoreData] = useState({
-  user_id: "",
-  leetcode_easy: 0,
-  leetcode_medium: 0,
-  leetcode_hard: 0,
-  event_score: 0,
-  platform_score: 0,
-  contest_score: 0,
-});
-
-
-const handleScoreSubmit = async (e) => {
-  e.preventDefault();
-
-  try {
-    const response = await updateScore(scoreData);
-    alert(response.message);
-  } catch (error) {
-    alert("Score update failed");
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-950 text-white">
+        Loading admin panel...
+      </div>
+    );
   }
-};
 
+  const stats = [
+    ["Total Students", 800, "text-cyan-400"],
+    ["Active Coders", 300, "text-green-400"],
+    ["Live Contests", 5, "text-yellow-400"],
+    ["Resources Uploaded", 120, "text-purple-400"],
+  ];
 
-const handleScoreChange = (e) => {
-  setScoreData({
-    ...scoreData,
-    [e.target.name]: e.target.value,
-  });
-};
+  const tabs = [
+    ["overview", "Overview"],
+    ["events", "Events"],
+    ["contests", "Contests"],
+    ["problems", "Problems"],
+    ["resources", "Resources"],
+    ["announcements", "Announcements"],
+    ["users", "Users"],
+  ];
+
   return (
-    <>
+    <div className="min-h-screen bg-slate-950 text-white overflow-x-hidden">
       <Navbar />
 
-      <div className="p-8">
-        <h1 className="text-4xl font-bold mb-8">
-          Admin Panel
-        </h1>
+      <div className="pt-36 pb-20 px-4 lg:px-10 relative">
+        {/* Background */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-cyan-600/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl" />
+        </div>
 
-        <form
-          onSubmit={handleSubmit}
-          className="bg-white p-8 rounded-lg shadow-lg max-w-xl"
-        >
-          <h2 className="text-2xl font-bold mb-6">
-            Create New Event
-          </h2>
-
-          <input
-            type="text"
-            name="title"
-            placeholder="Event Title"
-            value={eventData.title}
-            onChange={handleChange}
-            className="w-full p-3 border rounded mb-4"
-            required
-          />
-
-          <textarea
-            name="description"
-            placeholder="Description"
-            value={eventData.description}
-            onChange={handleChange}
-            className="w-full p-3 border rounded mb-4"
-            required
-          />
-
-          <input
-            type="date"
-            name="event_date"
-            value={eventData.event_date}
-            onChange={handleChange}
-            className="w-full p-3 border rounded mb-4"
-            required
-          />
-
-          <input
-            type="text"
-            name="venue"
-            placeholder="Venue"
-            value={eventData.venue}
-            onChange={handleChange}
-            className="w-full p-3 border rounded mb-6"
-            required
-          />
-
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-3 rounded-lg"
+        <div className="relative max-w-7xl mx-auto space-y-12">
+          {/* Hero */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-slate-900/80 border border-slate-800 rounded-[2.5rem] p-10 shadow-2xl"
           >
-            Create Event
-          </button>
-        </form>
-        <form
-  onSubmit={handleScoreSubmit}
-  className="bg-white p-8 rounded-lg shadow-lg max-w-xl mt-10"
->
-  <h2 className="text-2xl font-bold mb-6">
-    Update User Score
-  </h2>
+            <div className="flex flex-col lg:flex-row justify-between items-center gap-8">
+              <div>
+                <p className="text-cyan-400 uppercase tracking-[0.3em] font-semibold mb-4">
+                  Administrative Control Center
+                </p>
+                <h1 className="text-5xl md:text-6xl font-extrabold mb-4">
+                  Admin Panel V3
+                </h1>
+                <p className="text-slate-400 text-xl max-w-3xl">
+                  Manage contests, students, resources, events, and the entire coding club ecosystem.
+                </p>
+              </div>
 
-  <input
-    type="number"
-    name="user_id"
-    placeholder="User ID"
-    value={scoreData.user_id}
-    onChange={handleScoreChange}
-    className="w-full p-3 border rounded mb-4"
-    required
-  />
+              <div className="w-32 h-32 rounded-3xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center text-5xl font-bold shadow-2xl">
+                A
+              </div>
+            </div>
+          </motion.div>
 
-  <input
-    type="number"
-    name="leetcode_easy"
-    placeholder="LeetCode Easy Solved"
-    value={scoreData.leetcode_easy}
-    onChange={handleScoreChange}
-    className="w-full p-3 border rounded mb-4"
-  />
+          {/* Analytics */}
+          <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
+            {stats.map(([title, value, color], idx) => (
+              <motion.div
+                key={title}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.08 }}
+                className="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 shadow-xl"
+              >
+                <p className="text-slate-400 mb-2">{title}</p>
+                <h2 className={`text-4xl font-bold ${color}`}>{value}</h2>
+              </motion.div>
+            ))}
+          </div>
 
-  <input
-    type="number"
-    name="leetcode_medium"
-    placeholder="LeetCode Medium Solved"
-    value={scoreData.leetcode_medium}
-    onChange={handleScoreChange}
-    className="w-full p-3 border rounded mb-4"
-  />
+          {/* Tabs */}
+          <div className="flex flex-wrap gap-4 justify-center">
+            {tabs.map(([key, label]) => (
+              <button
+                key={key}
+                onClick={() => setActiveTab(key)}
+                className={`px-6 py-3 rounded-2xl font-medium transition-all ${
+                  activeTab === key
+                    ? "bg-cyan-500 text-black"
+                    : "bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
 
-  <input
-    type="number"
-    name="leetcode_hard"
-    placeholder="LeetCode Hard Solved"
-    value={scoreData.leetcode_hard}
-    onChange={handleScoreChange}
-    className="w-full p-3 border rounded mb-4"
-  />
+          {/* Dynamic Content */}
+          <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-8 shadow-xl min-h-[500px]">
+            {activeTab === "overview" && (
+              <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {[
+                  ["Create New Contest", "Launch major scoring competitions"],
+                  ["Manage Events", "Workshops, hackathons, seminars"],
+                  ["Upload Resources", "Notes, sheets, placement prep"],
+                  ["Post Announcements", "Deadlines, updates, notices"],
+                  ["User Management", "Student profiles & permissions"],
+                  ["Leaderboard Controls", "Score correction & rank systems"],
+                ].map(([title, desc], idx) => (
+                  <div
+                    key={idx}
+                    className="bg-slate-950 border border-slate-800 rounded-3xl p-6 hover:border-cyan-500 hover:-translate-y-2 transition-all"
+                  >
+                    <h3 className="text-2xl font-bold mb-3">{title}</h3>
+                    <p className="text-slate-400 mb-4">{desc}</p>
+                    <button className="text-cyan-400 font-semibold">
+                      Manage →
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
 
-  <input
-    type="number"
-    name="event_score"
-    placeholder="Event Score"
-    value={scoreData.event_score}
-    onChange={handleScoreChange}
-    className="w-full p-3 border rounded mb-4"
-  />
+            {activeTab !== "overview" && (
+              <div className="flex flex-col items-center justify-center h-full text-center py-20">
+                <h2 className="text-4xl font-bold mb-4 capitalize">
+                  {activeTab} Management Module
+                </h2>
+                <p className="text-slate-400 text-lg max-w-2xl">
+                  This section will manage all {activeTab} related CRUD operations, analytics, and controls for the coding club ecosystem.
+                </p>
+              </div>
+            )}
+          </div>
 
-  <input
-    type="number"
-    name="platform_score"
-    placeholder="Platform Score"
-    value={scoreData.platform_score}
-    onChange={handleScoreChange}
-    className="w-full p-3 border rounded mb-4"
-  />
+          {/* Recent Admin Actions */}
+          <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-8 shadow-xl">
+            <h2 className="text-3xl font-bold mb-8">Recent Admin Actions</h2>
 
-  <input
-    type="number"
-    name="contest_score"
-    placeholder="Contest Score"
-    value={scoreData.contest_score}
-    onChange={handleScoreChange}
-    className="w-full p-3 border rounded mb-6"
-  />
-
-  <button
-    type="submit"
-    className="w-full bg-green-600 text-white py-3 rounded-lg"
-  >
-    Update Score
-  </button>
-</form>
+            <div className="space-y-4">
+              {[
+                "Created Weekly Coding Clash contest",
+                "Uploaded new DSA placement sheet",
+                "Approved 25 new student registrations",
+                "Published upcoming AI workshop announcement",
+              ].map((action, idx) => (
+                <div
+                  key={idx}
+                  className="bg-slate-950 border border-slate-800 rounded-2xl p-4"
+                >
+                  <p className="text-slate-300">{action}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
-    </>
+    </div>
   );
 }
 

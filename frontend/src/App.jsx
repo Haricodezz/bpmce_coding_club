@@ -13,11 +13,13 @@ import AdminRoute from "./routes/AdminRoute";
 import Announcements from "./pages/Announcements";
 import Resources from "./pages/Resources";
 import Practice from "./pages/Practice";
+import Contests from "./pages/Contests";
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/contests" element={<Contests />} />
         <Route path="/practice" element={<Practice />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
